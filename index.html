@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Estante Widget - Versão Mobile Friendly</title>
+    <style>
+        /* --- ESTILO GERAL --- */
+        body {
+            margin: 0; padding: 0;
+            background-color: transparent; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+        }
+
+        /* O MÓVEL */
+        .furniture-wrapper {
+            width: 90%; max-width: 420px;
+            margin: 20px auto;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        /* A PARTE DE CIMA (ESTANTE) */
+        .bookshelf-container {
+            width: 100%;
+            background-color: #0d0d0d; 
+            border: 15px solid #1a1a1a; 
+            border-bottom: none;
+            border-radius: 6px 6px 0 0; 
+            box-shadow: 10px 10px 30px rgba(0,0,0,0.6);
+            display: flex; flex-direction: column;
+            position: relative;
+        }
+
+        .bookshelf-container::before {
+            content: ''; position: absolute;
+            top: -25px; left: -15px; right: -15px; height: 25px;
+            background: #1a1a1a; border-radius: 4px 4px 0 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        /* AS PRATELEIRAS */
+        .shelf-row {
+            height: 130px; 
+            border-bottom: 12px solid #252525;
+            display: flex; align-items: flex-end; 
+            padding: 0 8px;
+            background: linear-gradient(to bottom, #050505, #161616); 
+            position: relative;
+            overflow: hidden; 
+        }
+
+        .shelf-row::before {
+            content: ''; position: absolute;
+            top: 0; left: 0; right: 0; height: 10px;
+            background: rgba(0,0,0,0.4); z-index: 1; pointer-events: none;
+        }
+
+        /* A BASE COM OS PÉS */
+        .shelf-footer {
+            width: 100%; display: flex; justify-content: space-between;
+            padding: 0 5px; box-sizing: border-box;
+        }
+
+        .foot {
+            width: 50px; height: 30px; background: #1a1a1a;
+            border-radius: 0 0 5px 5px;
+            box-shadow: 5px 5px 10px rgba(0,0,0,0.5); position: relative;
+        }
+
+        #secret-btn {
+            width: 100%; height: 100%; opacity: 0; cursor: pointer; border: none;
+        }
+        
+        /* O LIVRO (Agora suporta ser um link <a>) */
+        .book, a.book-link {
+            margin-right: 1px;
+            background-size: cover; background-position: center; background-repeat: no-repeat;
+            border-radius: 1px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.9);
+            transition: transform 0.2s;
+            cursor: pointer; position: relative;
+            flex-shrink: 0; 
+            display: block; /* Garante que o link ocupe o espaço */
+            text-decoration: none; /* Remove sublinhado de link */
+        }
+
+        .book:hover, a.book-link:hover {
+            transform: scale(1.05) translateY(-5px);
+            z-index: 10;
+            box-shadow: 0 0 15px rgba(255,255,255,0.1);
+        }
+
+        .book:hover::after, a.book-link:hover::after {
+            content: attr(data-title);
+            position: absolute; bottom: 105%; left: 50%;
+            transform: translateX(-50%);
+            background: #000; color: #fff;
+            padding: 4px 8px; border-radius: 4px;
+            font-size: 11px; white-space: nowrap;
+            z-index: 20; border: 1px solid #333;
+        }
+
+        /* PAINEL DE CADASTRO */
+        #admin-panel {
+            display: none; background: #151515; padding: 15px;
+            border-bottom: 2px solid #333; position: fixed;
+            top: 0; left: 0; right: 0; z-index: 100;
+            max-height: 90vh; overflow-y: auto; 
+            box-shadow: 0 10px 40px rgba(0,0,0,1);
+        }
+
+        .input-group { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+        input { padding: 8px; background: #222; border: 1px solid #444; color: #eee; border-radius: 4px; }
+        .input-mini { width: 80px; } 
+
+        button.action-btn {
+            padding: 8px 16px; cursor: pointer; border: none; border-radius: 4px; font-weight: 600; text-transform: uppercase; font-size: 11px; color: white;
+        }
+        .btn-add { background-color: #388E3C; }
+        .btn-close { background-color: #D32F2F; }
+        .btn-gen { background-color: #2196F3; width: 100%; margin-top: 5px; }
+        .btn-load { background-color: #FF9800; width: 100%; margin-top: 5px; }
+
+        /* Lista de Exclusão */
+        #book-list-container { margin-top: 20px; border-top: 1px solid #333; padding-top: 10px; }
+        .list-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: #1f1f1f; padding: 5px 10px; margin-bottom: 4px; 
+            border-radius: 4px; border: 1px solid #333; font-size: 12px;
+        }
+        .btn-trash { 
+            background: #b71c1c; color: white; border: none; 
+            border-radius: 3px; width: 24px; height: 24px; cursor: pointer; font-weight: bold;
+        }
+
+        /* Área de Backup */
+        #backup-area { margin-top: 15px; padding-top: 10px; border-top: 1px dashed #444; }
+        textarea { 
+            width: 100%; height: 60px; background: #111; color: #0f0; 
+            font-family: monospace; font-size: 10px; border: 1px solid #333; 
+            margin-top: 5px; padding: 5px; box-sizing: border-box; resize: vertical; 
+        }
+
+        /* Mensagens de Status */
+        #status-msg { margin: 10px 0; padding: 8px; border-radius: 4px; font-size: 12px; display: none; text-align: center; }
+        .status-success { background: #1b5e20; color: #fff; }
+        .status-error { background: #b71c1c; color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div id="admin-panel">
+        <h3 style="margin: 0 0 10px 0; color: #ccc; font-size: 16px;">Gerenciar Estante (Modo CM)</h3>
+        <div id="status-msg"></div>
+
+        <div class="input-group">
+            <input type="text" id="seriesName" placeholder="Nome da Série" style="flex: 2;">
+            <input type="number" id="volNumber" placeholder="Vol." style="width: 50px;">
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="imgUrl" placeholder="URL da Imagem (Pública)" style="flex: 2;">
+            <input type="text" id="pageLink" placeholder="Link da Pág. (Opcional)" style="flex: 2;">
+        </div>
+
+        <div class="input-group">
+            <input type="number" id="bookHeightCm" class="input-mini" placeholder="Alt (cm)" value="19" step="0.1" title="Altura em CM">
+            <input type="number" id="bookWidthCm" class="input-mini" placeholder="Esp (cm)" value="1.5" step="0.1" title="Espessura em CM">
+            
+            <button class="action-btn btn-add" onclick="addBook()">Adicionar</button>
+            <button class="action-btn btn-close" onclick="togglePanel()">Fechar</button>
+        </div>
+
+        <div id="book-list-container">
+            <h4 style="margin: 0 0 10px 0; color: #aaa; font-size: 12px;">LIVROS CADASTRADOS:</h4>
+            <div id="active-book-list"></div>
+        </div>
+
+        <div id="backup-area">
+            <label style="font-size: 11px; color: #aaa;">BACKUP / RESTAURAÇÃO:</label>
+            <textarea id="backupText" placeholder="Copie o código gerado aqui..."></textarea>
+            <button class="action-btn btn-gen" onclick="generateBackupCode()">Gerar Código (Copiar)</button>
+            <button class="action-btn btn-load" onclick="restoreBackupCode()">Restaurar (Colar)</button>
+        </div>
+    </div>
+
+    <div class="furniture-wrapper">
+        <div class="bookshelf-container" id="bookshelf">
+            <div class="shelf-row" id="shelf-1"></div>
+            <div class="shelf-row" id="shelf-2"></div>
+            <div class="shelf-row" id="shelf-3"></div>
+            <div class="shelf-row" id="shelf-4"></div>
+            <div class="shelf-row" id="shelf-5"></div>
+            <div class="shelf-row" id="shelf-6"></div>
+        </div>
+        
+        <div class="shelf-footer">
+            <div class="foot left-foot"></div>
+            <div class="foot right-foot">
+                <button id="secret-btn" onclick="togglePanel()" title="Configurações"></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'myMangaShelf_MobileFix';
+        let myBooks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        const PIXELS_PER_CM = 5; 
+
+        function showStatus(text, type) {
+            const el = document.getElementById('status-msg');
+            el.innerText = text;
+            el.className = type === 'error' ? 'status-error' : 'status-success';
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 3000);
+        }
+
+        function togglePanel() {
+            const panel = document.getElementById('admin-panel');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+            renderBookList(); 
+        }
+
+        function saveAndRender() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(myBooks));
+            renderShelf();
+            renderBookList(); 
+        }
+
+        function addBook() {
+            const series = document.getElementById('seriesName').value.trim();
+            const vol = parseInt(document.getElementById('volNumber').value);
+            let url = document.getElementById('imgUrl').value.trim();
+            let link = document.getElementById('pageLink').value.trim();
+            let h_cm = parseFloat(document.getElementById('bookHeightCm').value) || 19;
+            let w_cm = parseFloat(document.getElementById('bookWidthCm').value) || 1.5;
+
+            if (!series || !url) {
+                showStatus("Preciso do Nome e da URL da Imagem!", "error");
+                return;
+            }
+
+            // Correção simples de Link para garantir que funcione
+            if (link && !link.startsWith('http')) {
+                link = 'https://' + link;
+            }
+
+            const newBook = {
+                series: series,
+                vol: isNaN(vol) ? 0 : vol,
+                url: url,
+                link: link,
+                h_cm: h_cm,
+                w_cm: w_cm,
+                id: Date.now()
+            };
+
+            myBooks.push(newBook);
+            
+            document.getElementById('volNumber').value = '';
+            document.getElementById('imgUrl').value = '';
+            document.getElementById('pageLink').value = '';
+            
+            saveAndRender();
+            showStatus("Livro Adicionado!", "success");
+        }
+
+        function deleteBook(id) {
+            myBooks = myBooks.filter(book => book.id !== id);
+            saveAndRender();
+            showStatus("Livro removido.", "success");
+        }
+
+        function renderBookList() {
+            const list = document.getElementById('active-book-list');
+            list.innerHTML = '';
+            
+            let sortedBooks = [...myBooks].sort((a, b) => {
+                if (a.series.toLowerCase() < b.series.toLowerCase()) return -1;
+                if (a.series.toLowerCase() > b.series.toLowerCase()) return 1;
+                return a.vol - b.vol;
+            });
+
+            if (sortedBooks.length === 0) {
+                list.innerHTML = '<div style="color:#555; font-size:11px; text-align:center;">Nenhum livro cadastrado.</div>';
+                return;
+            }
+
+            sortedBooks.forEach(b => {
+                const item = document.createElement('div');
+                item.className = 'list-item';
+                item.innerHTML = `
+                    <span>${b.series} #${b.vol}</span>
+                    <button class="btn-trash" onclick="deleteBook(${b.id})" title="Excluir">X</button>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function generateBackupCode() {
+            const dataStr = JSON.stringify(myBooks);
+            const textArea = document.getElementById('backupText');
+            textArea.value = dataStr;
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showStatus("Copiado! Cole no bloco de notas.", "success");
+            } catch (err) {
+                showStatus("Selecione e copie manualmente.", "success");
+            }
+        }
+
+        function restoreBackupCode() {
+            const textArea = document.getElementById('backupText');
+            const code = textArea.value.trim();
+            
+            if (!code) {
+                showStatus("A caixa de texto está vazia.", "error");
+                return;
+            }
+
+            try {
+                const imported = JSON.parse(code);
+                if (Array.isArray(imported)) {
+                    myBooks = imported;
+                    saveAndRender();
+                    showStatus("Restaurado com Sucesso!", "success");
+                    textArea.value = ""; 
+                } else {
+                    showStatus("Código inválido.", "error");
+                }
+            } catch (err) { 
+                showStatus("Erro no código. Verifique se copiou tudo.", "error"); 
+            }
+        }
+
+        function renderShelf() {
+            for (let i = 1; i <= 6; i++) {
+                document.getElementById(`shelf-${i}`).innerHTML = '';
+            }
+
+            myBooks.sort((a, b) => {
+                if (a.series.toLowerCase() < b.series.toLowerCase()) return -1;
+                if (a.series.toLowerCase() > b.series.toLowerCase()) return 1;
+                return a.vol - b.vol;
+            });
+
+            let shelfIndex = 1;
+            let currentWidthUsed = 0;
+            const shelfMaxWidth = 400; 
+
+            myBooks.forEach(book => {
+                const heightPx = book.h_cm * PIXELS_PER_CM;
+                const widthPx = book.w_cm * PIXELS_PER_CM;
+
+                // Aqui criamos ou DIV ou tag A dependendo se tem link
+                let bookEl;
+
+                if (book.link) {
+                    bookEl = document.createElement('a');
+                    bookEl.className = 'book-link';
+                    bookEl.href = book.link;
+                    bookEl.target = '_blank'; // Abre em nova aba
+                } else {
+                    bookEl = document.createElement('div');
+                    bookEl.className = 'book';
+                }
+
+                bookEl.style.backgroundImage = `url('${book.url}')`;
+                bookEl.style.height = `${heightPx}px`;
+                bookEl.style.width = `${widthPx}px`;
+                
+                const displayVol = book.vol > 0 ? ` #${book.vol}` : '';
+                bookEl.setAttribute('data-title', `${book.series}${displayVol}`);
+
+                // Lógica de prateleira
+                if ((currentWidthUsed + widthPx) > shelfMaxWidth) {
+                    shelfIndex++;
+                    currentWidthUsed = 0;
+                }
+
+                const currentShelf = document.getElementById(`shelf-${shelfIndex}`);
+                if (currentShelf) {
+                    currentShelf.appendChild(bookEl);
+                    currentWidthUsed += widthPx;
+                }
+            });
+        }
+
+        renderShelf();
+    </script>
+</body>
+</html>
