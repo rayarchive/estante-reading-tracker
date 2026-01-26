@@ -2,7 +2,8 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Estante Widget - Versão Mobile Friendly</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Estante Widget - Página A</title>
     <style>
         /* --- ESTILO GERAL --- */
         body {
@@ -71,7 +72,7 @@
             width: 100%; height: 100%; opacity: 0; cursor: pointer; border: none;
         }
         
-        /* O LIVRO (Agora suporta ser um link <a>) */
+        /* O LIVRO */
         .book, a.book-link {
             margin-right: 1px;
             background-size: cover; background-position: center; background-repeat: no-repeat;
@@ -80,8 +81,8 @@
             transition: transform 0.2s;
             cursor: pointer; position: relative;
             flex-shrink: 0; 
-            display: block; /* Garante que o link ocupe o espaço */
-            text-decoration: none; /* Remove sublinhado de link */
+            display: block;
+            text-decoration: none;
         }
 
         .book:hover, a.book-link:hover {
@@ -121,7 +122,6 @@
         .btn-gen { background-color: #2196F3; width: 100%; margin-top: 5px; }
         .btn-load { background-color: #FF9800; width: 100%; margin-top: 5px; }
 
-        /* Lista de Exclusão */
         #book-list-container { margin-top: 20px; border-top: 1px solid #333; padding-top: 10px; }
         .list-item { 
             display: flex; justify-content: space-between; align-items: center; 
@@ -133,7 +133,6 @@
             border-radius: 3px; width: 24px; height: 24px; cursor: pointer; font-weight: bold;
         }
 
-        /* Área de Backup */
         #backup-area { margin-top: 15px; padding-top: 10px; border-top: 1px dashed #444; }
         textarea { 
             width: 100%; height: 60px; background: #111; color: #0f0; 
@@ -141,7 +140,6 @@
             margin-top: 5px; padding: 5px; box-sizing: border-box; resize: vertical; 
         }
 
-        /* Mensagens de Status */
         #status-msg { margin: 10px 0; padding: 8px; border-radius: 4px; font-size: 12px; display: none; text-align: center; }
         .status-success { background: #1b5e20; color: #fff; }
         .status-error { background: #b71c1c; color: #fff; }
@@ -150,7 +148,7 @@
 <body>
 
     <div id="admin-panel">
-        <h3 style="margin: 0 0 10px 0; color: #ccc; font-size: 16px;">Gerenciar Estante (Modo CM)</h3>
+        <h3 style="margin: 0 0 10px 0; color: #ccc; font-size: 16px;">Gerenciar Estante A (Modo CM)</h3>
         <div id="status-msg"></div>
 
         <div class="input-group">
@@ -203,7 +201,8 @@
     </div>
 
     <script>
-        const STORAGE_KEY = 'myMangaShelf_MobileFix';
+        // CHAVE ÚNICA PARA A PÁGINA A
+        const STORAGE_KEY = 'myMangaShelf_PAGINA_A';
         let myBooks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
         const PIXELS_PER_CM = 5; 
 
@@ -240,7 +239,6 @@
                 return;
             }
 
-            // Correção simples de Link para garantir que funcione
             if (link && !link.startsWith('http')) {
                 link = 'https://' + link;
             }
@@ -256,7 +254,6 @@
             };
 
             myBooks.push(newBook);
-            
             document.getElementById('volNumber').value = '';
             document.getElementById('imgUrl').value = '';
             document.getElementById('pageLink').value = '';
@@ -282,7 +279,7 @@
             });
 
             if (sortedBooks.length === 0) {
-                list.innerHTML = '<div style="color:#555; font-size:11px; text-align:center;">Nenhum livro cadastrado.</div>';
+                list.innerHTML = '<div style="color:#555; font-size:11px; text-align:center;">Nenhum livro cadastrado na Estante A.</div>';
                 return;
             }
 
@@ -313,12 +310,10 @@
         function restoreBackupCode() {
             const textArea = document.getElementById('backupText');
             const code = textArea.value.trim();
-            
             if (!code) {
                 showStatus("A caixa de texto está vazia.", "error");
                 return;
             }
-
             try {
                 const imported = JSON.parse(code);
                 if (Array.isArray(imported)) {
@@ -353,14 +348,12 @@
                 const heightPx = book.h_cm * PIXELS_PER_CM;
                 const widthPx = book.w_cm * PIXELS_PER_CM;
 
-                // Aqui criamos ou DIV ou tag A dependendo se tem link
                 let bookEl;
-
                 if (book.link) {
                     bookEl = document.createElement('a');
                     bookEl.className = 'book-link';
                     bookEl.href = book.link;
-                    bookEl.target = '_blank'; // Abre em nova aba
+                    bookEl.target = '_blank';
                 } else {
                     bookEl = document.createElement('div');
                     bookEl.className = 'book';
@@ -373,7 +366,6 @@
                 const displayVol = book.vol > 0 ? ` #${book.vol}` : '';
                 bookEl.setAttribute('data-title', `${book.series}${displayVol}`);
 
-                // Lógica de prateleira
                 if ((currentWidthUsed + widthPx) > shelfMaxWidth) {
                     shelfIndex++;
                     currentWidthUsed = 0;
