@@ -8,34 +8,30 @@
     <style>
         /* --- VARIÁVEIS DE COR --- */
         :root {
-            --bg-transparent: transparent;
             --shelf-bg: #0d0d0d;
             --shelf-border: #1a1a1a;
             --shelf-divider: #252525;
             --shelf-gradient-start: #050505;
             --shelf-gradient-end: #161616;
-            --shelf-shadow-top: rgba(0,0,0,0.4);
+            --shelf-shadow-top: rgba(0,0,0,0.2);
+            --bg-transparent: transparent;
             --text-color: white;
             --panel-bg: #151515;
             --panel-border: #333;
             --input-bg: #222;
             --input-border: #444;
             --input-text: #eee;
-            --list-item-bg: #1f1f1f;
             --tooltip-bg: #000;
-            --tooltip-border: #333;
-            --backup-text-bg: #111;
-            --backup-text-color: #0f0;
-        }
+    }
 
         @media (prefers-color-scheme: light) {
             :root {
-                --shelf-bg: #f5f5f5;
-                --shelf-border: #d4d4d4;
-                --shelf-divider: #e0e0e0;
-                --shelf-gradient-start: #fafafa;
-                --shelf-gradient-end: #eeeeee;
-                --shelf-shadow-top: rgba(0,0,0,0.1);
+                --shelf-bg: #0d0d0d;
+                --shelf-border: #1a1a1a;
+                --shelf-divider: #252525;
+                --shelf-gradient-start: #050505;
+                --shelf-gradient-end: #161616;
+                --shelf-shadow-top: rgba(0,0,0,0.2);
                 --text-color: #1a1a1a;
                 --panel-bg: #ffffff;
                 --panel-border: #d4d4d4;
@@ -63,7 +59,7 @@
         .furniture-wrapper {
             width: 90%;
             max-width: 420px;
-            margin: 20px auto;
+            margin: 20px auto 0 auto;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -128,7 +124,7 @@
     height: 55px;
     background: var(--shelf-border);
     border-radius: 0 0 0px 0px;
-    box-shadow: 10px 10px 30px rgba(0,0,0,0.6);
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.6);
     position: relative;
     margin-top: -1px; 
     z-index: 5;
