@@ -2,85 +2,162 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
     <title>Estante Widget - Página A</title>
     <style>
+        /* --- VARIÁVEIS DE COR --- */
+        :root {
+            --bg-transparent: transparent;
+            --shelf-bg: #0d0d0d;
+            --shelf-border: #1a1a1a;
+            --shelf-divider: #252525;
+            --shelf-gradient-start: #050505;
+            --shelf-gradient-end: #161616;
+            --shelf-shadow-top: rgba(0,0,0,0.4);
+            --text-color: white;
+            --panel-bg: #151515;
+            --panel-border: #333;
+            --input-bg: #222;
+            --input-border: #444;
+            --input-text: #eee;
+            --list-item-bg: #1f1f1f;
+            --tooltip-bg: #000;
+            --tooltip-border: #333;
+            --backup-text-bg: #111;
+            --backup-text-color: #0f0;
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                --shelf-bg: #f5f5f5;
+                --shelf-border: #d4d4d4;
+                --shelf-divider: #e0e0e0;
+                --shelf-gradient-start: #fafafa;
+                --shelf-gradient-end: #eeeeee;
+                --shelf-shadow-top: rgba(0,0,0,0.1);
+                --text-color: #1a1a1a;
+                --panel-bg: #ffffff;
+                --panel-border: #d4d4d4;
+                --input-bg: #f5f5f5;
+                --input-border: #d4d4d4;
+                --input-text: #1a1a1a;
+                --list-item-bg: #fafafa;
+                --tooltip-bg: #333;
+                --tooltip-border: #999;
+                --backup-text-bg: #fafafa;
+                --backup-text-color: #1a8a1a;
+            }
+        }
+
         /* --- ESTILO GERAL --- */
-        body {
-            margin: 0; padding: 0;
-            background-color: transparent; 
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: transparent !important;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: white;
+            color: var(--text-color);
         }
 
         /* O MÓVEL */
         .furniture-wrapper {
-            width: 90%; max-width: 420px;
+            width: 90%;
+            max-width: 420px;
             margin: 20px auto;
-            display: flex; flex-direction: column; align-items: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         /* A PARTE DE CIMA (ESTANTE) */
         .bookshelf-container {
             width: 100%;
-            background-color: #0d0d0d; 
-            border: 15px solid #1a1a1a; 
+            background-color: var(--shelf-bg);
+            border: 15px solid var(--shelf-border);
             border-bottom: none;
-            border-radius: 6px 6px 0 0; 
+            border-radius: 6px 6px 0 0;
             box-shadow: 10px 10px 30px rgba(0,0,0,0.6);
-            display: flex; flex-direction: column;
+            display: flex;
+            flex-direction: column;
             position: relative;
         }
 
         .bookshelf-container::before {
-            content: ''; position: absolute;
-            top: -25px; left: -15px; right: -15px; height: 25px;
-            background: #1a1a1a; border-radius: 4px 4px 0 0;
+            content: '';
+            position: absolute;
+            top: -25px;
+            left: -15px;
+            right: -15px;
+            height: 25px;
+            background: var(--shelf-border);
+            border-radius: 4px 4px 0 0;
             box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
 
         /* AS PRATELEIRAS */
         .shelf-row {
-            height: 130px; 
-            border-bottom: 12px solid #252525;
-            display: flex; align-items: flex-end; 
+            height: 130px;
+            border-bottom: 12px solid var(--shelf-divider);
+            display: flex;
+            align-items: flex-end;
             padding: 0 8px;
-            background: linear-gradient(to bottom, #050505, #161616); 
+            background: linear-gradient(to bottom, var(--shelf-gradient-start), var(--shelf-gradient-end));
             position: relative;
-            overflow: hidden; 
+            overflow: hidden;
         }
+      .shelf-row:last-of-type {
+    border-bottom: none !important;
+    background: transparent !important;
+}
 
         .shelf-row::before {
-            content: ''; position: absolute;
-            top: 0; left: 0; right: 0; height: 10px;
-            background: rgba(0,0,0,0.4); z-index: 1; pointer-events: none;
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: var(--shelf-shadow-top);
+            z-index: 1;
+            pointer-events: none;
         }
-
-        /* A BASE COM OS PÉS */
-        .shelf-footer {
-            width: 100%; display: flex; justify-content: space-between;
-            padding: 0 5px; box-sizing: border-box;
-        }
-
-        .foot {
-            width: 50px; height: 30px; background: #1a1a1a;
-            border-radius: 0 0 5px 5px;
-            box-shadow: 5px 5px 10px rgba(0,0,0,0.5); position: relative;
-        }
+        
+.shelf-footer {
+    
+    width: calc(100% + 30px); 
+    height: 55px;
+    background: var(--shelf-border);
+    border-radius: 0 0 0px 0px;
+    box-shadow: 10px 10px 30px rgba(0,0,0,0.6);
+    position: relative;
+    margin-top: -1px; 
+    z-index: 5;
+}
 
         #secret-btn {
-            width: 100%; height: 100%; opacity: 0; cursor: pointer; border: none;
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 50px;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            border: none;
+            background: transparent;
         }
         
         /* O LIVRO */
         .book, a.book-link {
             margin-right: 1px;
-            background-size: cover; background-position: center; background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             border-radius: 1px;
             box-shadow: 2px 0 5px rgba(0,0,0,0.9);
             transition: transform 0.2s;
-            cursor: pointer; position: relative;
-            flex-shrink: 0; 
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
             display: block;
             text-decoration: none;
         }
@@ -93,62 +170,169 @@
 
         .book:hover::after, a.book-link:hover::after {
             content: attr(data-title);
-            position: absolute; bottom: 105%; left: 50%;
+            position: absolute;
+            bottom: 105%;
+            left: 50%;
             transform: translateX(-50%);
-            background: #000; color: #fff;
-            padding: 4px 8px; border-radius: 4px;
-            font-size: 11px; white-space: nowrap;
-            z-index: 20; border: 1px solid #333;
+            background: var(--tooltip-bg);
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            white-space: nowrap;
+            z-index: 20;
+            border: 1px solid var(--tooltip-border);
         }
 
         /* PAINEL DE CADASTRO */
         #admin-panel {
-            display: none; background: #151515; padding: 15px;
-            border-bottom: 2px solid #333; position: fixed;
-            top: 0; left: 0; right: 0; z-index: 100;
-            max-height: 90vh; overflow-y: auto; 
-            box-shadow: 0 10px 40px rgba(0,0,0,1);
+            display: none;
+            background: var(--panel-bg);
+            padding: 15px;
+            border-bottom: 2px solid var(--panel-border);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
 
-        .input-group { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
-        input { padding: 8px; background: #222; border: 1px solid #444; color: #eee; border-radius: 4px; }
-        .input-mini { width: 80px; } 
+        .input-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        input {
+            padding: 8px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--input-text);
+            border-radius: 4px;
+        }
+
+        .input-mini {
+            width: 80px;
+        }
 
         button.action-btn {
-            padding: 8px 16px; cursor: pointer; border: none; border-radius: 4px; font-weight: 600; text-transform: uppercase; font-size: 11px; color: white;
-        }
-        .btn-add { background-color: #388E3C; }
-        .btn-close { background-color: #D32F2F; }
-        .btn-gen { background-color: #2196F3; width: 100%; margin-top: 5px; }
-        .btn-load { background-color: #FF9800; width: 100%; margin-top: 5px; }
-
-        #book-list-container { margin-top: 20px; border-top: 1px solid #333; padding-top: 10px; }
-        .list-item { 
-            display: flex; justify-content: space-between; align-items: center; 
-            background: #1f1f1f; padding: 5px 10px; margin-bottom: 4px; 
-            border-radius: 4px; border: 1px solid #333; font-size: 12px;
-        }
-        .btn-trash { 
-            background: #b71c1c; color: white; border: none; 
-            border-radius: 3px; width: 24px; height: 24px; cursor: pointer; font-weight: bold;
+            padding: 8px 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px;
+            color: white;
         }
 
-        #backup-area { margin-top: 15px; padding-top: 10px; border-top: 1px dashed #444; }
-        textarea { 
-            width: 100%; height: 60px; background: #111; color: #0f0; 
-            font-family: monospace; font-size: 10px; border: 1px solid #333; 
-            margin-top: 5px; padding: 5px; box-sizing: border-box; resize: vertical; 
+        .btn-add {
+            background-color: #388E3C;
         }
 
-        #status-msg { margin: 10px 0; padding: 8px; border-radius: 4px; font-size: 12px; display: none; text-align: center; }
-        .status-success { background: #1b5e20; color: #fff; }
-        .status-error { background: #b71c1c; color: #fff; }
+        .btn-close {
+            background-color: #D32F2F;
+        }
+
+        .btn-gen {
+            background-color: #2196F3;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        .btn-load {
+            background-color: #FF9800;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        #book-list-container {
+            margin-top: 20px;
+            border-top: 1px solid var(--panel-border);
+            padding-top: 10px;
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--list-item-bg);
+            padding: 5px 10px;
+            margin-bottom: 4px;
+            border-radius: 4px;
+            border: 1px solid var(--panel-border);
+            font-size: 12px;
+        }
+
+        .btn-trash {
+            background: #b71c1c;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #backup-area {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--input-border);
+        }
+
+        textarea {
+            width: 100%;
+            height: 60px;
+            background: var(--backup-text-bg);
+            color: var(--backup-text-color);
+            font-family: monospace;
+            font-size: 10px;
+            border: 1px solid var(--panel-border);
+            margin-top: 5px;
+            padding: 5px;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+
+        #status-msg {
+            margin: 10px 0;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            display: none;
+            text-align: center;
+        }
+
+        .status-success {
+            background: #1b5e20;
+            color: #fff;
+        }
+
+        .status-error {
+            background: #b71c1c;
+            color: #fff;
+        }
+
+        h3, h4 {
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        label {
+            color: var(--text-color);
+            opacity: 0.7;
+        }
     </style>
 </head>
 <body>
 
     <div id="admin-panel">
-        <h3 style="margin: 0 0 10px 0; color: #ccc; font-size: 16px;">Gerenciar Estante A (Modo CM)</h3>
+        <h3 style="margin: 0 0 10px 0; font-size: 16px;">Gerenciar Estante A (Modo CM)</h3>
         <div id="status-msg"></div>
 
         <div class="input-group">
@@ -170,12 +354,12 @@
         </div>
 
         <div id="book-list-container">
-            <h4 style="margin: 0 0 10px 0; color: #aaa; font-size: 12px;">LIVROS CADASTRADOS:</h4>
+            <h4 style="margin: 0 0 10px 0; font-size: 12px;">LIVROS CADASTRADOS:</h4>
             <div id="active-book-list"></div>
         </div>
 
         <div id="backup-area">
-            <label style="font-size: 11px; color: #aaa;">BACKUP / RESTAURAÇÃO:</label>
+            <label style="font-size: 11px;">BACKUP / RESTAURAÇÃO:</label>
             <textarea id="backupText" placeholder="Copie o código gerado aqui..."></textarea>
             <button class="action-btn btn-gen" onclick="generateBackupCode()">Gerar Código (Copiar)</button>
             <button class="action-btn btn-load" onclick="restoreBackupCode()">Restaurar (Colar)</button>
@@ -193,10 +377,7 @@
         </div>
         
         <div class="shelf-footer">
-            <div class="foot left-foot"></div>
-            <div class="foot right-foot">
-                <button id="secret-btn" onclick="togglePanel()" title="Configurações"></button>
-            </div>
+            <button id="secret-btn" onclick="togglePanel()" title="Configurações"></button>
         </div>
     </div>
 
